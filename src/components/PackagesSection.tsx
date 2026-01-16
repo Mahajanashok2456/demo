@@ -1,6 +1,12 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { Compass, Crown, Wallet, Users, Sparkles, Globe } from 'lucide-react';
+import adventureImg from '@/assets/package-adventure.jpg';
+import luxuryImg from '@/assets/package-luxury.jpg';
+import budgetImg from '@/assets/package-budget.jpg';
+import familyImg from '@/assets/package-family.jpg';
+import spiritualImg from '@/assets/package-spiritual.jpg';
+import internationalImg from '@/assets/package-international.jpg';
 
 const packages = [
   {
@@ -10,7 +16,7 @@ const packages = [
     duration: '5D/6N',
     price: '₹24,999',
     highlights: ['Trekking', 'Camping', 'Wildlife'],
-    gradient: 'from-emerald-500/20 to-teal-500/20',
+    image: adventureImg,
     accent: '#10B981',
   },
   {
@@ -20,7 +26,7 @@ const packages = [
     duration: '7D/8N',
     price: '₹89,999',
     highlights: ['5-Star Hotels', 'Private Tours', 'Fine Dining'],
-    gradient: 'from-amber-500/20 to-yellow-500/20',
+    image: luxuryImg,
     accent: '#F59E0B',
   },
   {
@@ -30,7 +36,7 @@ const packages = [
     duration: '4D/5N',
     price: '₹12,999',
     highlights: ['Group Tours', 'Hostels', 'Local Food'],
-    gradient: 'from-blue-500/20 to-cyan-500/20',
+    image: budgetImg,
     accent: '#3B82F6',
   },
   {
@@ -40,7 +46,7 @@ const packages = [
     duration: '6D/7N',
     price: '₹45,999',
     highlights: ['Kid-Friendly', 'Resorts', 'Activities'],
-    gradient: 'from-pink-500/20 to-rose-500/20',
+    image: familyImg,
     accent: '#EC4899',
   },
   {
@@ -50,7 +56,7 @@ const packages = [
     duration: '5D/6N',
     price: '₹18,999',
     highlights: ['Temples', 'Meditation', 'Yoga'],
-    gradient: 'from-purple-500/20 to-violet-500/20',
+    image: spiritualImg,
     accent: '#8B5CF6',
   },
   {
@@ -60,7 +66,7 @@ const packages = [
     duration: '8D/9N',
     price: '₹1,49,999',
     highlights: ['Visa Assist', 'Flights', 'Multi-City'],
-    gradient: 'from-accent/20 to-golden/20',
+    image: internationalImg,
     accent: '#E94560',
   },
 ];
@@ -77,8 +83,8 @@ function PackageCard({ pkg, index }: { pkg: typeof packages[0]; index: number })
     const centerY = rect.height / 2;
     
     setRotation({
-      x: (y - centerY) / 10,
-      y: (centerX - x) / 10,
+      x: (y - centerY) / 15,
+      y: (centerX - x) / 15,
     });
   };
 
@@ -100,28 +106,44 @@ function PackageCard({ pkg, index }: { pkg: typeof packages[0]; index: number })
       onMouseLeave={handleMouseLeave}
       style={{
         transform: `perspective(1000px) rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`,
-        transition: 'transform 0.1s ease-out',
+        transition: 'transform 0.15s ease-out',
       }}
-      className="card-3d p-6 cursor-pointer group"
+      className="relative rounded-2xl overflow-hidden cursor-pointer group h-[400px]"
     >
-      {/* Gradient Background */}
-      <div className={`absolute inset-0 bg-gradient-to-br ${pkg.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl`} />
+      {/* Background Image */}
+      <div className="absolute inset-0">
+        <img 
+          src={pkg.image} 
+          alt={pkg.name}
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+        <div 
+          className="absolute inset-0 opacity-0 group-hover:opacity-30 transition-opacity duration-500"
+          style={{ backgroundColor: pkg.accent }}
+        />
+      </div>
       
       {/* Content */}
-      <div className="relative z-10">
-        {/* Icon */}
-        <div 
-          className="w-14 h-14 rounded-xl glass flex items-center justify-center mb-4 transition-all duration-300"
+      <div className="absolute inset-0 p-6 flex flex-col justify-end relative z-10">
+        {/* Icon Badge */}
+        <motion.div
+          initial={false}
+          animate={{ 
+            scale: isHovered ? 1.1 : 1,
+            y: isHovered ? -10 : 0 
+          }}
+          className="absolute top-6 right-6 w-12 h-12 rounded-xl glass flex items-center justify-center"
           style={{ 
             borderColor: isHovered ? pkg.accent : undefined,
-            boxShadow: isHovered ? `0 0 30px ${pkg.accent}40` : undefined 
+            boxShadow: isHovered ? `0 0 30px ${pkg.accent}50` : undefined 
           }}
         >
-          <Icon className="w-7 h-7" style={{ color: pkg.accent }} />
-        </div>
+          <Icon className="w-6 h-6" style={{ color: pkg.accent }} />
+        </motion.div>
         
         {/* Title */}
-        <h3 className="text-2xl font-display font-semibold text-foreground mb-2">
+        <h3 className="text-3xl font-display font-bold text-foreground mb-2">
           {pkg.name}
         </h3>
         
@@ -129,43 +151,49 @@ function PackageCard({ pkg, index }: { pkg: typeof packages[0]; index: number })
         <div className="flex items-center gap-3 mb-4">
           <span className="text-sm text-muted-foreground">{pkg.duration}</span>
           <span className="w-1 h-1 rounded-full bg-muted-foreground/50" />
-          <span className="text-lg font-semibold" style={{ color: pkg.accent }}>
+          <span className="text-xl font-bold" style={{ color: pkg.accent }}>
             {pkg.price}
           </span>
         </div>
         
         {/* Highlights */}
-        <div className="flex flex-wrap gap-2">
+        <motion.div 
+          initial={false}
+          animate={{ 
+            opacity: isHovered ? 1 : 0.8,
+            y: isHovered ? 0 : 10 
+          }}
+          className="flex flex-wrap gap-2"
+        >
           {pkg.highlights.map((highlight, i) => (
             <span 
               key={i}
-              className="text-xs px-3 py-1 rounded-full glass text-muted-foreground"
+              className="text-xs px-3 py-1.5 rounded-full glass-strong text-foreground/80"
             >
               {highlight}
             </span>
           ))}
-        </div>
+        </motion.div>
         
-        {/* Hover Arrow */}
+        {/* Explore Button */}
         <motion.div
-          initial={{ opacity: 0, x: -10 }}
-          animate={{ opacity: isHovered ? 1 : 0, x: isHovered ? 0 : -10 }}
-          className="absolute top-6 right-6"
+          initial={false}
+          animate={{ 
+            opacity: isHovered ? 1 : 0,
+            y: isHovered ? 0 : 20 
+          }}
+          transition={{ duration: 0.3 }}
+          className="mt-4"
         >
-          <div 
-            className="w-10 h-10 rounded-full flex items-center justify-center"
-            style={{ backgroundColor: `${pkg.accent}20` }}
+          <button 
+            className="px-6 py-2.5 rounded-full font-semibold text-sm transition-all"
+            style={{ 
+              backgroundColor: pkg.accent,
+              color: '#ffffff'
+            }}
           >
-            <svg 
-              className="w-5 h-5" 
-              style={{ color: pkg.accent }}
-              fill="none" 
-              viewBox="0 0 24 24" 
-              stroke="currentColor"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
-          </div>
+            Explore Package →
+          </button>
         </motion.div>
       </div>
     </motion.div>
